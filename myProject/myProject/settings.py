@@ -13,6 +13,8 @@ ALLOWED_HOSTS: list[str] = [
     "127.0.0.1",
     "[::1]",
     "project02demo-production.up.railway.app",
+    "*.up.railway.app",
+    "*.railway.app",
 ]
 
 INSTALLED_APPS = [
@@ -98,9 +100,17 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
+# Railway production settings
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_TZ = True
+
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
     "https://project02demo-production.up.railway.app",
+    "https://*.up.railway.app",
+    "https://*.railway.app",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
 ]

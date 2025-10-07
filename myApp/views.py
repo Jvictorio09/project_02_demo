@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django.db import connection
 
 from .models import Property, Lead
 from .forms import LeadForm
@@ -161,6 +162,18 @@ def property_chat(request: HttpRequest, slug: str) -> HttpResponse:
     }
     
     return render(request, "partials/chat_bubble.html", context)
+
+
+def health_check(request: HttpRequest) -> HttpResponse:
+    """Health check endpoint for Railway"""
+    try:
+        # Test database connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        
+        return JsonResponse({"status": "healthy", "database": "connected"})
+    except Exception as e:
+        return JsonResponse({"status": "unhealthy", "error": str(e)}, status=500)
 
 
 def simple_answer(prop: Property, text: str) -> str:
